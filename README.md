@@ -1,136 +1,200 @@
-# Playwright Java E2E Skeleton
+# Template Playwright Java
 
-Framework profesional de automatizacion E2E con **Playwright Java**, **Maven**, **TestNG** y **Page Object Model (POM)**.
+Framework base de automatizacion transversal para QA con **Playwright Java**, **Maven**, **TestNG** y **Page Object Model (POM)**.
 
-La maqueta esta preparada para ejecutar pruebas reales sobre **SauceDemo** (`https://www.saucedemo.com/`) y ya incorpora:
+El proyecto nace con foco en **Web E2E**, pero esta documentado y preparado para evolucionar a una plataforma de automatizacion mas amplia que cubra:
 
-- ejecucion `headed` para ver el navegador en local
-- captura de **screenshots**
-- generacion de **videos**
-- trazas **Playwright Trace**
-- reporte HTML clasico de Maven/TestNG
-- reporte HTML de evidencias con enlaces directos a artefactos
+- **Web UI**
+- **API / integration testing**
+- **Mobile web emulation**
+- **Native mobile automation** como extension separada
 
----
+Estado actual del repositorio:
 
-## 1. Objetivo
-
-Esta base sirve para arrancar un proyecto de automatizacion E2E con una estructura mantenible y escalable:
-
-- separacion clara entre pruebas, paginas, configuracion y utilidades
-- soporte para evidencias por prueba
-- configuracion por propiedades y sobreescritura por `-D`
-- compatibilidad con ejecucion local e integracion futura en CI/CD
+- Web E2E funcional sobre `https://www.saucedemo.com/`
+- Reportes HTML
+- Screenshots, videos y traces por prueba
+- Data-driven testing con CSV
+- Maven Wrapper para clonar y ejecutar en otros equipos sin instalar Maven manualmente
 
 ---
 
-## 2. Stack Tecnologico
+## 1. Documentacion Disponible
 
-- **Java 17**
-- **Maven**
-- **Playwright Java**
-- **TestNG**
-- **Log4j2**
+Este `README` es la entrada principal. El detalle tecnico y operativo se separa en `docs/`.
+
+- [Arquitectura](docs/ARCHITECTURE.md)
+- [Instalacion y clonacion en otros equipos](docs/SETUP-NEW-MACHINE.md)
+- [Estrategia transversal Web/API/Mobile](docs/TRANSVERSAL-STRATEGY.md)
 
 ---
 
-## 3. Requisitos Previos
+## 2. Alcance Actual y Alcance Objetivo
 
-Antes de ejecutar el proyecto asegurese de tener instalado:
+### Alcance actual
 
-1. **JDK 17**
-2. **Maven 3.9+**
-3. **Git**
-4. **Node.js** opcional, solo si quiere servir reportes por `http://`
+- Framework **Web UI** con Playwright Java
+- Pruebas sobre navegador `chromium`
+- Soporte para `firefox` y `webkit` por configuracion
+- Evidencias automaticas:
+  - screenshot
+  - video
+  - trace zip
+- Reporte HTML de evidencias
+- Reporte Maven/TestNG
 
-Verificaciones rapidas:
+### Alcance objetivo
 
-```bash
-java -version
-mvn -version
-git --version
-node -v
-```
+El diseno contempla escalar a una fabrica de pruebas mas transversal:
+
+- Web UI
+- API
+- Mobile web
+- Native mobile
+- Integracion CI/CD
+- Ejecucion por ambientes
+- Etiquetado por smoke, regression, critical
+
+Importante:
+
+- **Playwright Java soporta Web UI, API testing y emulacion de dispositivos moviles en navegador** segun su documentacion oficial.
+- **Automatizacion nativa mobile** no forma parte de la capacidad directa de este esqueleto. Para esa capa se recomienda una integracion adicional, por ejemplo con Appium o Maestro, en un modulo separado.  
+  Esto es una **inferencia de arquitectura** basada en el alcance documentado de Playwright Java.
+
+Referencias oficiales:
+
+- Playwright Java intro: https://playwright.dev/java/docs/intro
+- Playwright Java API testing: https://playwright.dev/java/docs/api-testing
+- Playwright Java browsers: https://playwright.dev/java/docs/browsers
+- Playwright Java emulation: https://playwright.dev/java/docs/next/emulation
+
+---
+
+## 3. Stack Tecnologico
+
+- Java 17
+- Maven 3.9.x
+- Maven Wrapper
+- Playwright Java
+- TestNG
+- Log4j2
+- Git
+- Node.js opcional para servir reportes por `http://`
 
 ---
 
 ## 4. Estructura del Proyecto
 
 ```text
-src/
-+-- main/java/com/example/project/
-|   +-- config/
-|   |   +-- FrameworkConfig.java
-|   |   \-- PlaywrightFactory.java
-|   +-- pages/
-|   |   +-- BasePage.java
-|   |   +-- InventoryPage.java
-|   |   \-- LoginPage.java
-|   \-- utils/
-|       +-- ArtifactManager.java
-|       +-- ConfigManager.java
-|       +-- CsvDataReader.java
-|       +-- DatabaseUtils.java
-|       \-- ExecutionReportManager.java
-\-- test/
-    +-- java/com/example/project/tests/
-    |   +-- BaseTest.java
-    |   \-- LoginTest.java
-    \-- resources/
-        +-- config.properties
-        +-- log4j2.xml
-        \-- testdata/
-            \-- login-credentials.csv
+.
++-- .mvn/
+|   \-- wrapper/
+|       \-- maven-wrapper.properties
++-- docs/
+|   +-- ARCHITECTURE.md
+|   +-- SETUP-NEW-MACHINE.md
+|   \-- TRANSVERSAL-STRATEGY.md
++-- src/
+|   +-- main/java/com/example/project/
+|   |   +-- config/
+|   |   |   +-- FrameworkConfig.java
+|   |   |   \-- PlaywrightFactory.java
+|   |   +-- pages/
+|   |   |   +-- BasePage.java
+|   |   |   +-- InventoryPage.java
+|   |   |   \-- LoginPage.java
+|   |   \-- utils/
+|   |       +-- ArtifactManager.java
+|   |       +-- ConfigManager.java
+|   |       +-- CsvDataReader.java
+|   |       +-- DatabaseUtils.java
+|   |       \-- ExecutionReportManager.java
+|   \-- test/
+|       +-- java/com/example/project/tests/
+|       |   +-- BaseTest.java
+|       |   \-- LoginTest.java
+|       \-- resources/
+|           +-- config.properties
+|           +-- log4j2.xml
+|           \-- testdata/
+|               \-- login-credentials.csv
++-- .gitignore
++-- mvnw
++-- mvnw.cmd
++-- pom.xml
+\-- README.md
 ```
 
-### Responsabilidad por capa
+---
 
-- `config`: inicializacion de Playwright, lectura de propiedades y parametros base
-- `pages`: Page Objects bajo POM
-- `utils`: utilidades transversales y administracion de artefactos/reportes
-- `tests`: casos de prueba y ciclo de vida de ejecucion
-- `resources`: configuracion y data-driven testing
+## 5. Inicio Rapido
+
+### Windows PowerShell
+
+```powershell
+git clone https://github.com/JhonmySoftware/Template_Playwrigth_Java.git
+cd Template_Playwrigth_Java
+.\mvnw.cmd -q -DskipTests compile
+.\mvnw.cmd exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+.\mvnw.cmd test
+```
+
+### Linux / macOS / Git Bash
+
+```bash
+git clone https://github.com/JhonmySoftware/Template_Playwrigth_Java.git
+cd Template_Playwrigth_Java
+chmod +x mvnw
+./mvnw -q -DskipTests compile
+./mvnw exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install"
+./mvnw test
+```
+
+Notas:
+
+- `mvnw` y `mvnw.cmd` permiten usar Maven Wrapper.
+- El comando `install` de Playwright instala los navegadores requeridos por la version actual del framework, tal como indica la documentacion oficial de Playwright Java: https://playwright.dev/java/docs/browsers
 
 ---
 
-## 5. Patrones y Convenciones Aplicadas
+## 6. Como Clonar y Usar en Otros Equipos
 
-### Page Object Model
+La guia detallada esta en:
 
-Cada pagina encapsula:
+- [docs/SETUP-NEW-MACHINE.md](docs/SETUP-NEW-MACHINE.md)
 
-- locators
-- acciones
-- validaciones basicas de estado
+Resumen corto:
 
-Las pruebas no interactuan directamente con locators de Playwright. Consumen metodos de negocio de cada pagina.
+1. instalar JDK 17
+2. clonar el repositorio
+3. usar Maven Wrapper
+4. instalar navegadores Playwright
+5. ejecutar una prueba de smoke
+6. abrir el reporte de evidencias
 
-### BaseTest
+Smoke recomendado:
 
-`BaseTest` centraliza:
+### Windows
 
-- inicializacion de `Playwright`
-- apertura y cierre de `Browser`
-- creacion aislada de `BrowserContext` y `Page` por test
-- screenshots
-- videos
-- traces
-- escritura de reporte de evidencias
+```powershell
+.\mvnw.cmd test -Dtest=LoginTest#shouldDisplayLockedOutErrorForRestrictedUser
+```
 
-### Locators estables
+### Linux / macOS
 
-El proyecto usa `data-test` y `getByTestId(...)` cuando el sitio lo soporta.  
-En SauceDemo eso es mas estable que selectores CSS acoplados al layout.
+```bash
+./mvnw test -Dtest=LoginTest#shouldDisplayLockedOutErrorForRestrictedUser
+```
 
 ---
 
-## 6. Configuracion
+## 7. Configuracion
 
-Archivo base:
+Archivo principal:
 
-- `src/test/resources/config.properties`
+- [config.properties](src/test/resources/config.properties)
 
-Contenido actual:
+Configuracion actual:
 
 ```properties
 browser=chromium
@@ -153,167 +217,83 @@ video.height=720
 inventory.url.fragment=inventory.html
 ```
 
-### Significado de propiedades
-
-| Propiedad | Descripcion |
-|---|---|
-| `browser` | Navegador a usar: `chromium`, `firefox`, `webkit` |
-| `headless` | `false` para ver el navegador, `true` para ejecucion oculta |
-| `slow.mo` | Retardo en milisegundos entre acciones Playwright |
-| `default.timeout.ms` | Timeout por defecto para operaciones |
-| `navigation.timeout.ms` | Timeout de navegacion |
-| `base.url` | URL base del AUT |
-| `test.id.attribute` | Atributo usado por `getByTestId` |
-| `trace.enabled` | Habilita traza Playwright |
-| `video.enabled` | Habilita grabacion de video |
-| `screenshot.on.failure` | Screenshot cuando la prueba falla |
-| `screenshot.on.success` | Screenshot cuando la prueba pasa |
-| `artifacts.base.dir` | Ruta base para evidencias |
-| `reports.base.dir` | Ruta base para reportes |
-| `inventory.url.fragment` | Fragmento esperado de URL tras login exitoso |
-
-### Override por linea de comandos
-
-Ejemplos:
+Overrides comunes:
 
 ```bash
-mvn test -Dheadless=true
-mvn test -Dbrowser=firefox
-mvn test -Dslow.mo=800
-mvn test -Dbase.url=https://www.saucedemo.com/
+./mvnw test -Dbrowser=firefox
+./mvnw test -Dheadless=true
+./mvnw test -Dslow.mo=800
+./mvnw test -Dbase.url=https://mi-app.ejemplo.com
 ```
 
 ---
 
-## 7. Datos de Prueba
-
-Archivo actual:
-
-- `src/test/resources/testdata/login-credentials.csv`
-
-Formato:
-
-```csv
-username,password,expectedTitle
-standard_user,secret_sauce,Products
-problem_user,secret_sauce,Products
-```
-
-### Nota importante
-
-`shouldLoginSuccessfully` usa `DataProvider`, por eso una sola prueba puede ejecutarse varias veces si existen multiples filas en el CSV.
-
----
-
-## 8. Casos de Prueba Incluidos
-
-### `LoginTest`
-
-Escenarios actuales:
-
-1. login exitoso con `standard_user`
-2. login exitoso con `problem_user`
-3. validacion de error con `locked_out_user`
-
-Credenciales conocidas de SauceDemo:
-
-- usuario valido: `standard_user`
-- usuario bloqueado: `locked_out_user`
-- password comun: `secret_sauce`
-
----
-
-## 9. Ejecucion
+## 8. Ejecucion de Pruebas
 
 ### Ejecutar toda la suite
 
 ```bash
-mvn clean test
+./mvnw clean test
 ```
 
 ### Ejecutar una clase
 
 ```bash
-mvn test -Dtest=LoginTest
+./mvnw test -Dtest=LoginTest
 ```
 
 ### Ejecutar un metodo
 
 ```bash
-mvn test -Dtest=LoginTest#shouldDisplayLockedOutErrorForRestrictedUser
+./mvnw test -Dtest=LoginTest#shouldLoginSuccessfully
 ```
 
-### Ejecutar en Firefox
+### Ejecutar en otro navegador
 
 ```bash
-mvn test -Dbrowser=firefox
+./mvnw test -Dbrowser=webkit
 ```
 
-### Ejecutar en modo headless
+### Ejecutar en modo oculto
 
 ```bash
-mvn test -Dheadless=true
+./mvnw test -Dheadless=true
+```
+
+### Ejecutar con navegador visible y mas lento
+
+```bash
+./mvnw test -Dheadless=false -Dslow.mo=900
 ```
 
 ---
 
-## 10. Reportes y Evidencias
+## 9. Reportes y Evidencias
 
 ### Reporte Maven/TestNG
 
-Salida:
-
 - `target/reports/automation-test-report.html`
 
-Este reporte resume ejecuciones, pero no esta pensado como visor principal de evidencias.
-
-### Reporte de evidencias Playwright
-
-Salida:
+### Reporte HTML de evidencias
 
 - `target/reports/playwright-evidence-report.html`
 
-Incluye por cada test:
-
-- estado
-- duracion
-- link a screenshot
-- link a trace ZIP
-- link a video
-- preview inline de imagen
-- reproductor de video embebido
-
 ### Artefactos por corrida
-
-Cada corrida genera una carpeta unica:
 
 ```text
 target/artifacts/run_YYYYMMDD_HHMMSS/
 ```
 
-Ejemplo de contenido:
+Cada corrida guarda:
 
-```text
-screenshots/
-traces/
-videos/
-execution-summary.html
-```
+- `screenshots/`
+- `videos/`
+- `traces/`
+- `execution-summary.html`
 
----
+### Como abrir el reporte correctamente
 
-## 11. Como Ver las Evidencias
-
-### Opcion 1: abrir HTML local
-
-Abra:
-
-- `target/reports/playwright-evidence-report.html`
-
-### Opcion 2: servir por HTTP local
-
-Algunos navegadores limitan la reproduccion de videos desde `file://`.  
-En ese caso use un servidor local:
+Si el navegador bloquea recursos locales `file://`, sirvalo por HTTP:
 
 ```bash
 npx serve target -l 8765
@@ -325,67 +305,196 @@ Luego abra:
 http://127.0.0.1:8765/reports/playwright-evidence-report.html
 ```
 
-### Trazas Playwright
-
-Un archivo `.zip` de traza no se abre como video ni como HTML.  
-Debe abrirse con **Playwright Trace Viewer**.
+### Como abrir un trace
 
 Opcion recomendada:
 
-1. abra `https://trace.playwright.dev/`
-2. arrastre el archivo `.zip` de `target/artifacts/.../traces/`
+1. abrir `https://trace.playwright.dev/`
+2. arrastrar el `.zip` generado
+
+Opcion CLI:
+
+```bash
+./mvnw exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="show-trace target/artifacts/<run>/traces/<archivo>.zip"
+```
+
+---
+
+## 10. Datos de Prueba
+
+Archivo actual:
+
+- [login-credentials.csv](src/test/resources/testdata/login-credentials.csv)
+
+Contenido:
+
+```csv
+username,password,expectedTitle
+standard_user,secret_sauce,Products
+problem_user,secret_sauce,Products
+```
+
+La prueba `shouldLoginSuccessfully` usa `DataProvider`, por lo tanto ejecuta una iteracion por cada fila del CSV.
+
+---
+
+## 11. Casos de Prueba Actuales
+
+### LoginTest
+
+- login exitoso con `standard_user`
+- login exitoso con `problem_user`
+- validacion de usuario bloqueado con `locked_out_user`
+
+Sistema bajo prueba:
+
+- `https://www.saucedemo.com/`
+
+---
+
+## 12. Estrategia de Evolucion
+
+Este repositorio **no debe quedarse solo como prueba de login**. La estrategia documentada es evolucionarlo en capas.
+
+### Fase 1
+
+- estabilizar Web UI
+- ampliar Page Objects
+- cubrir smoke y regression
+
+### Fase 2
+
+- agregar pruebas API
+- usar API para setup y teardown de datos
+- validar post-condiciones server-side despues de acciones UI
+
+### Fase 3
+
+- agregar mobile web emulation
+- ejecutar suites responsivas y por device profile
+
+### Fase 4
+
+- separar un modulo para native mobile si el producto lo exige
+
+Detalle tecnico:
+
+- [docs/TRANSVERSAL-STRATEGY.md](docs/TRANSVERSAL-STRATEGY.md)
+
+---
+
+## 13. Uso Transversal Web, API y Mobile
+
+### Web UI
+
+Es la capacidad principal actual.
+
+### API
+
+Playwright Java expone `APIRequestContext`, por lo que este mismo ecosistema puede cubrir:
+
+- pruebas puras de API
+- preparacion de datos de prueba
+- verificacion de estado backend
+- login via API y reutilizacion de `storageState`
 
 Referencia oficial:
 
-- https://playwright.dev/java/docs/trace-viewer-intro
+- https://playwright.dev/java/docs/api-testing
+
+### Mobile web
+
+Playwright soporta emulacion de dispositivos moviles en navegador:
+
+- viewport
+- user agent
+- touch
+- screen size
+
+Referencia oficial:
+
+- https://playwright.dev/java/docs/next/emulation
+
+### Native mobile
+
+Para Android/iOS nativo, la recomendacion de arquitectura es **separar modulo o suite**.  
+No mezclar automation nativa dentro de los mismos Page Objects web.
 
 ---
 
-## 12. Flujo de Ejecucion del Framework
+## 14. Documentacion Tecnica Detallada
 
-1. `BaseTest` lee `config.properties`
-2. `PlaywrightFactory` crea `Playwright`, `Browser` y `BrowserContext`
-3. `BaseTest` crea un `Page` aislado por prueba
-4. el test interactua con `LoginPage` e `InventoryPage`
-5. al terminar cada prueba:
-   - se guarda screenshot
-   - se guarda trace ZIP
-   - se guarda video
-   - se actualiza el HTML de evidencias
+### Arquitectura interna
 
----
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
-## 13. Ejemplo de Extension del Framework
+Incluye:
 
-Para agregar una nueva pagina:
+- flujo de ejecucion completo
+- responsabilidades por paquete
+- ciclo de vida de Playwright
+- estrategia de artefactos
+- convenciones de nombres
+- guia para extender el framework
 
-1. crear Page Object en `src/main/java/.../pages`
-2. encapsular locators y acciones
-3. crear clase de prueba en `src/test/java/.../tests`
-4. reutilizar `BaseTest`
-5. si aplica, agregar CSV/JSON en `src/test/resources`
+### Instalacion en maquinas nuevas
 
-Ejemplo de nuevas paginas candidatas para SauceDemo:
+- [docs/SETUP-NEW-MACHINE.md](docs/SETUP-NEW-MACHINE.md)
 
-- `CartPage`
-- `CheckoutPage`
-- `MenuPage`
-- `ProductDetailPage`
+Incluye:
 
----
+- JDK
+- Git
+- Maven Wrapper
+- Playwright browsers
+- proxy corporativo
+- troubleshooting por sistema
 
-## 14. Buenas Practicas Recomendadas
+### Estrategia transversal
 
-- no poner assertions complejas dentro de los Page Objects
-- no usar CSS frágil basado en estructura visual si existe `data-test`
-- aislar `BrowserContext` por prueba
-- mantener los datos de prueba fuera de la clase cuando el escenario sea data-driven
-- centralizar timeouts y configuracion
-- usar videos y traces para diagnostico, no solo screenshots
+- [docs/TRANSVERSAL-STRATEGY.md](docs/TRANSVERSAL-STRATEGY.md)
+
+Incluye:
+
+- modelo objetivo web/api/mobile
+- limites actuales del framework
+- propuesta de carpetas y modulos futuros
+- criterios para decidir entre monolito y multi-modulo
 
 ---
 
-## 15. Troubleshooting
+## 15. Git y Colaboracion
+
+### Clonar
+
+```bash
+git clone https://github.com/JhonmySoftware/Template_Playwrigth_Java.git
+cd Template_Playwrigth_Java
+```
+
+### Crear rama de trabajo
+
+```bash
+git checkout -b feature/nombre-cambio
+```
+
+### Flujo minimo
+
+```bash
+git add .
+git commit -m "Describe el cambio"
+git push -u origin feature/nombre-cambio
+```
+
+### Actualizar rama local
+
+```bash
+git pull --rebase origin main
+```
+
+---
+
+## 16. Problemas Frecuentes
 
 ### No veo el navegador
 
@@ -396,103 +505,45 @@ headless=false
 slow.mo=300
 ```
 
-Tambien confirme que no este sobreescribiendo por CLI:
+### No se reproducen videos desde el HTML
 
-```bash
-mvn test -Dheadless=false
-```
-
-### El video no abre desde el HTML
-
-Use servidor local:
+Use un servidor local:
 
 ```bash
 npx serve target -l 8765
 ```
 
-### El trace ZIP no "se reproduce"
+### El trace ZIP no se abre como video
 
-Es correcto.  
-Abra la traza en:
+Es correcto. Debe abrirse con Playwright Trace Viewer:
 
-- `https://trace.playwright.dev/`
+- https://trace.playwright.dev/
 
-### IntelliJ indica error de JVM target 17
+### La primera corrida tarda mucho
 
-Configure el proyecto con JDK 17 en IntelliJ y recargue Maven.
+Es normal si Playwright esta descargando navegadores compatibles.
 
-### Primera corrida tarda mucho
+### Tengo proxy corporativo
 
-Es normal. Playwright puede descargar dependencias/binarios en la primera ejecucion.
+Use la estrategia documentada en:
 
----
+- [docs/SETUP-NEW-MACHINE.md](docs/SETUP-NEW-MACHINE.md)
 
-## 16. Git y Publicacion
+Playwright documenta el uso de `HTTPS_PROXY` y `PLAYWRIGHT_DOWNLOAD_HOST` para instalaciones restringidas:
 
-### Inicializar repositorio local
-
-```bash
-git init -b main
-git add .
-git commit -m "Initial Playwright Java E2E framework"
-```
-
-### Conectar remoto y publicar
-
-```bash
-git remote add origin <URL_DEL_REPOSITORIO>
-git push -u origin main
-```
-
-Ejemplo:
-
-```bash
-git remote add origin https://github.com/usuario/repositorio.git
-git push -u origin main
-```
-
-### Recomendacion
-
-No versionar:
-
-- `target/`
-- `.idea/`
-- artefactos locales
-- reportes generados
-
-Eso ya queda cubierto por `.gitignore`.
+- https://playwright.dev/java/docs/browsers
 
 ---
 
-## 17. Estado Actual de la Maqueta
+## 17. Referencias Oficiales
 
-La base ya esta funcional y validada contra SauceDemo con:
-
-- login exitoso
-- usuario bloqueado
-- screenshots
-- videos
-- traces
-- reporte HTML de evidencias
-
----
-
-## 18. Siguientes Pasos Recomendados
-
-1. modelar `CartPage`
-2. modelar `CheckoutPage`
-3. agregar pruebas de compra end-to-end
-4. integrar ejecucion en Jenkins/GitHub Actions/Azure DevOps
-5. agregar lectura JSON y capas de test data mas robustas
-6. agregar tags/grupos TestNG por smoke, regression y critical
-
----
-
-## 19. Referencias Oficiales
-
-- Playwright Java: https://playwright.dev/java/docs/intro
-- Playwright Locators: https://playwright.dev/java/docs/locators
-- Playwright Videos: https://playwright.dev/java/docs/videos
-- Playwright Trace Viewer: https://playwright.dev/java/docs/trace-viewer-intro
+- Playwright Java intro: https://playwright.dev/java/docs/intro
+- Playwright Java writing tests: https://playwright.dev/java/docs/writing-tests
+- Playwright Java running tests: https://playwright.dev/java/docs/running-tests
+- Playwright Java locators: https://playwright.dev/java/docs/locators
+- Playwright Java browsers: https://playwright.dev/java/docs/browsers
+- Playwright Java API testing: https://playwright.dev/java/docs/api-testing
+- Playwright Java emulation: https://playwright.dev/java/docs/next/emulation
+- Playwright Java trace viewer: https://playwright.dev/java/docs/trace-viewer-intro
 - Maven Surefire Report Plugin: https://maven.apache.org/surefire/maven-surefire-report-plugin/report-only-mojo.html
 - TestNG: https://testng.org/
