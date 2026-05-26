@@ -24,6 +24,7 @@ Estado actual del repositorio:
 Este `README` es la entrada principal. El detalle tecnico y operativo se separa en `docs/`.
 
 - [Arquitectura](docs/ARCHITECTURE.md)
+- [CI/CD, GitHub Actions y Sonar](docs/CI-CD.md)
 - [Instalacion y clonacion en otros equipos](docs/SETUP-NEW-MACHINE.md)
 - [Estrategia transversal Web/API/Mobile](docs/TRANSVERSAL-STRATEGY.md)
 
@@ -494,7 +495,27 @@ git pull --rebase origin main
 
 ---
 
-## 16. Problemas Frecuentes
+## 16. CI/CD y Sonar
+
+El repositorio ya incluye pipeline base en:
+
+- `.github/workflows/ci.yml`
+
+Capacidades incluidas:
+
+- build en GitHub Actions
+- pruebas Playwright en CI
+- publicacion de artefactos
+- reporte JaCoCo
+- integracion condicional con SonarQube / SonarCloud
+
+Documentacion detallada:
+
+- [docs/CI-CD.md](docs/CI-CD.md)
+
+---
+
+## 17. Problemas Frecuentes
 
 ### No veo el navegador
 
@@ -535,7 +556,7 @@ Playwright documenta el uso de `HTTPS_PROXY` y `PLAYWRIGHT_DOWNLOAD_HOST` para i
 
 ---
 
-## 17. Referencias Oficiales
+## 18. Referencias Oficiales
 
 - Playwright Java intro: https://playwright.dev/java/docs/intro
 - Playwright Java writing tests: https://playwright.dev/java/docs/writing-tests

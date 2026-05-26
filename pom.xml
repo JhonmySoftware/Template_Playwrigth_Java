@@ -16,6 +16,8 @@
         <playwright.version>1.59.0</playwright.version>
         <testng.version>7.12.0</testng.version>
         <log4j2.version>2.25.4</log4j2.version>
+        <jacoco.version>0.8.14</jacoco.version>
+        <sonar.maven.plugin.version>5.5.0.6356</sonar.maven.plugin.version>
         <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.5</maven.surefire.plugin.version>
         <maven.surefire.report.plugin.version>3.5.5</maven.surefire.report.plugin.version>
@@ -73,6 +75,27 @@
                         <include>**/*Test.java</include>
                     </includes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
